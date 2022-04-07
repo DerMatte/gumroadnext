@@ -1,75 +1,103 @@
 import Link from "next/link";
 import Layout from "../components/Layout";
 import Head from "next/head";
+import { GetStaticProps, GetStaticPaths, GetServerSideProps } from 'next'
+import { getProducts } from '../lib/gumroad'
+import Image from "next/image";
+import he from 'he'
 
-const IndexPage = () => (
-  <Layout title="Home | Next.js + TypeScript + Tailwind">
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+const stripedDescription = (description) => {
+  const striped = description.replace(/<\/?[^>]+(>|$)/g, "");
+  const decodedStripedHtml = he.decode(striped)
+  return decodedStripedHtml;
+}
 
-      <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
-        <h1 className="py-8 text-6xl font-bold">
-          Hello{" "}
-          <a className="text-blue-600" href="https://nextjs.org">
-            Next.js!
-          </a>{" "}
-          👋
-        </h1>
 
-        <p className="mt-3 text-2xl">
-          Get started by editing{" "}
-          <code className="rounded-md bg-gray-100 p-3 font-mono text-lg">
-            pages/index.tsx
-          </code>
-        </p>
+const IndexPage = ({ products }) => {
+  // const stripedHtml = product.description.replace(/<[^>]+>/g, '')
 
-        <div className="mt-6 flex max-w-4xl flex-wrap items-center justify-around sm:w-full">
-          <a
-            href="https://nextjs.org/docs"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Documentation &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Find in-depth information about Next.js features and API.
-            </p>
-          </a>
+  return (
+    <Layout title="Gumroadnext">
+      <div className="flex min-h-screen flex-col items-center justify-center py-2">
+        <Head>
+          <title>Gumroad Shop</title>
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
 
-          <a
-            href="https://nextjs.org/learn"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Learn &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Learn about Next.js in an interactive course with quizzes!
-            </p>
-          </a>
+        <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
+          <h1 className="py-8 text-6xl font-bold">
+            Gumroad Shop 🛒
+          </h1>
 
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Examples &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Discover and deploy boilerplate example Next.js projects.
-            </p>
-          </a>
+          <div className="mx-auto py-32">
+            <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 space-x-4">
+              {products.map(product => (
+                <div key={product.id}>
+                  <div className="w-full max-w-sm mx-2">
+                    <div className="flex flex-col rounded overflow-hidden shadow-lg">
+                      <div className="h-64 w-96 relative">
+                        <Link href={`/product?id=${product.id}`}>
+                          <a>
+                            <Image
+                              className=""
+                              src={product.preview_url}
+                              alt={product.name}
+                              layout="fill"
+                              objectFit="cover"
+                            // width={1600}
+                            // height={1000}
 
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Deploy &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-    </div>
-  </Layout>
-);
+                            />
+                          </a>
+                        </Link>
+                      </div>
+                      <div className="px-6 py-4">
+                        <div className="font-bold text-xl mb-2">
+                          {product.name}
+                        </div>
+                        <p className="text-gray-700 text-base">
+                          {stripedDescription(product.description)}
+                        </p>
+
+                        {/* <a className="gumroad-button" href="https://lanasdev.gumroad.com/l/mgdzp?wanted=true" data-gumroad-single-product="true" className="z-10">Buy on</a> */}
+                        <div className="gumroad-product-embed mt-8  border p-3 w-32 bg-cyan-600 hover:bg-cyan-800 shadow-md hover:shadow-xl text-white text-center">
+                          <a className="inherit" href="https://lanasdev.gumroad.com/l/mgdzp"> Buy for {product.price / 100}€</a>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* <pre>{JSON.stringify(products, null, 2)}</pre> */}
+        </main>
+      </div >
+    </Layout >
+  )
+}
+
+
+
+
+export const getStaticProps: GetStaticProps = async (context) => {
+
+  const data = await getProducts()
+  if (!data.success) {
+    console.log("error", data.success);
+    return { props: { products: [] } }
+  }
+  const products = data.products
+
+
+  return {
+    props: {
+      products
+    }
+  }
+}
+
+
 
 export default IndexPage;

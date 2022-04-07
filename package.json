@@ -4,13 +4,16 @@
     "dev": "next",
     "build": "next build",
     "start": "next start",
-    "type-check": "tsc",
+    "type-check": "tsc --noEmit",
+    "type": "tsc --noEmit",
     "lint": "next lint"
   },
   "dependencies": {
+    "he": "^1.2.0",
     "next": "latest",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "swr": "^1.2.2"
   },
   "devDependencies": {
     "@types/node": "^17.0.23",

@@ -17,10 +17,10 @@ const Layout = ({ children, title = "This is the default title" }: Props) => (
     </Head>
     <Navbar />
     {children}
-    <footer>
+    {/* <footer>
       <hr />
       <span>I&apos;m here to stay (Footer)</span>
-    </footer>
+    </footer> */}
   </div>
 );
 
