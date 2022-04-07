@@ -61,7 +61,7 @@ const IndexPage = ({ products }) => {
 
                         {/* <a className="gumroad-button" href="https://lanasdev.gumroad.com/l/mgdzp?wanted=true" data-gumroad-single-product="true" className="z-10">Buy on</a> */}
                         <div className="gumroad-product-embed mt-8  border p-3 w-32 bg-cyan-600 hover:bg-cyan-800 shadow-md hover:shadow-xl text-white text-center">
-                          <a className="inherit" href="https://lanasdev.gumroad.com/l/mgdzp"> Buy for {product.price / 100}€</a>
+                          <a className="inherit" href={product.short_url}> Buy for {product.price / 100}€</a>
 
                         </div>
                       </div>
@@ -71,7 +71,7 @@ const IndexPage = ({ products }) => {
               ))}
             </div>
           </div>
-          {/* <pre>{JSON.stringify(products, null, 2)}</pre> */}
+          <pre>{JSON.stringify(products, null, 2)}</pre>
         </main>
       </div >
     </Layout >
